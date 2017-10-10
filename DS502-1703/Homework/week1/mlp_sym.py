@@ -54,15 +54,11 @@ def conv_layer(input_layer, num_filter=32, kernel=(3,3), if_pool=False):
     # Do you need pooling?
     # What is the expected output shape?
 
-    # w = mx.sym.ones((32, 1, 3, 3), ctx=mx.gpu()) / 27.
     conv = mx.sym.Convolution(data=input_layer,
                              num_filter=num_filter, kernel=kernel, pad=(1, 1), stride=(1, 1), # weight=w,
                              no_bias=True)
     relu = mx.sym.Activation(data=conv, act_type='tanh')
 
-
-    # cv = mx.sym.Convolution(data=input_layer, name='cv', num_filter=num_filter, kernel=kernel)
-    # act = mx.sym.Activation(data=cv, name='relu', act_type='relu')
     layer_s = mx.sym.BatchNorm(relu)
     if if_pool:
         layer_s = mx.sym.Pooling(data=layer_s, name='poing', kernel=(2, 2), stride=(2,2), pool_type='max')
@@ -94,20 +90,20 @@ def get_conv_sym():
 
     data_f = data # mx.sym.flatten(data=data)
 
+    # create 3 CNN network
     cnn_0 = conv_layer(data_f, num_filter=128, kernel=(3,3), if_pool=True)
     cnn_1 = conv_layer(cnn_0, num_filter=64, kernel=(3, 3), if_pool=True)
     cnn_2 = conv_layer(cnn_1, num_filter=32, kernel=(3, 3), if_pool=True)
-    # cnn_3 = conv_layer(cnn_2, num_filter=32, kernel=(3, 3), if_pool=True)
-    # cnn_4 = conv_layer(cnn_3, num_filter=32, kernel=(3, 3), if_pool=True)
 
+    # flatten CNN
     flatten = mx.symbol.Flatten(data=cnn_2)
+    # 1st FCN
     fc1 = mx.symbol.FullyConnected(data=flatten, num_hidden=100)
     tanh3 = mx.symbol.Activation(data=fc1, act_type="tanh")
+    # 2nd FCN
     fc2 = mx.symbol.FullyConnected(data=tanh3, num_hidden=10)
+    # softmax output
     cnn_n = mx.symbol.SoftmaxOutput(data=fc2, name='softmax')
-    # # MNIST has 10 classes
-    # cnn_n = mx.sym.FullyConnected(data=cnn_4, num_hidden=10)
-    # # Softmax with cross entropy loss
-    # cnn_n = mx.sym.SoftmaxOutput(data=cnn_n, name='softmax')
+
 
     return cnn_n
