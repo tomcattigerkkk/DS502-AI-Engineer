@@ -57,7 +57,7 @@ def conv_layer(input_layer, num_filter=32, kernel=(3,3), if_pool=False):
     conv = mx.sym.Convolution(data=input_layer,
                              num_filter=num_filter, kernel=kernel, pad=(1, 1), stride=(1, 1), # weight=w,
                              no_bias=True)
-    relu = mx.sym.Activation(data=conv, act_type='tanh')
+    relu = mx.sym.Activation(data=conv, act_type='relu')
 
     layer_s = mx.sym.BatchNorm(relu)
     if if_pool:
@@ -91,14 +91,14 @@ def get_conv_sym():
     data_f = data # mx.sym.flatten(data=data)
 
     # create 3 CNN network
-    cnn_0 = conv_layer(data_f, num_filter=128, kernel=(3,3), if_pool=True)
+    cnn_0 = conv_layer(data_f, num_filter=32, kernel=(3,3), if_pool=True)
     cnn_1 = conv_layer(cnn_0, num_filter=64, kernel=(3, 3), if_pool=True)
-    cnn_2 = conv_layer(cnn_1, num_filter=32, kernel=(3, 3), if_pool=True)
+    cnn_2 = conv_layer(cnn_1, num_filter=128, kernel=(3, 3), if_pool=True)
 
     # flatten CNN
     flatten = mx.symbol.Flatten(data=cnn_2)
     # 1st FCN
-    fc1 = mx.symbol.FullyConnected(data=flatten, num_hidden=100)
+    fc1 = mx.symbol.FullyConnected(data=flatten, num_hidden=128)
     tanh3 = mx.symbol.Activation(data=fc1, act_type="tanh")
     # 2nd FCN
     fc2 = mx.symbol.FullyConnected(data=tanh3, num_hidden=10)
