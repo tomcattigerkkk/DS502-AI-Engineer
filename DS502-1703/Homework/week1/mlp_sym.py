@@ -69,12 +69,31 @@ def conv_layer(input_layer, num_filter=32, kernel=(3,3), if_pool=False):
 
 
 # Optional
-def inception_layer():
+def inception_layer(input_layer, num1_1x1, num2_1x1, num2_3x3,
+                    num3_1x1, num3_5x5, num4_1x1, name):
     """
     Implement the inception layer in week3 class
     :return: the symbol of a inception layer
     """
-    pass
+    # first 1x1 convolution layer
+
+    cov1 = conv_layer(input_layer, num_filter=num1_1x1, kernel=(1,1))
+
+    # second 1x1 plus 3x3 convolution layer
+    cov2 = conv_layer(input_layer, num_filter=num2_1x1, kernel=(1,1))
+    cov2 = conv_layer(cov2, num_filter=num2_3x3)
+
+    # third 1x1 plus 3x3 convolution layer
+    cov3 = conv_layer(input_layer, num_filter=num3_1x1, kernel=(1, 1))
+    cov3 = conv_layer(cov3, num_filter=num3_5x5, kernel=(3, 3))
+
+    # forth 3x3 max-pooling plus 1x1 convolutin layer
+    # cov4 = mx.sym.Pooling(data=input_layer, name='poing', kernel=(3, 3), stride=(1, 1), pool_type='max')
+    cov4 = conv_layer(input_layer, num_filter=num4_1x1, kernel=(1,1))
+    # concat
+    inception_output = mx.sym.Concat(*[cov1, cov2, cov3, cov4], name=('concat %s' % name))
+
+    return inception_output
 
 
 def get_conv_sym():
@@ -88,20 +107,29 @@ def get_conv_sym():
     # How wide the network do you want? like 32/64/128 kernels per layer
     # How is the convolution like? Normal CNN? Inception Module? VGG like?
 
-    data_f = data # mx.sym.flatten(data=data)
+    data_f = data
 
     # create 3 CNN network
-    cnn_0 = conv_layer(data_f, num_filter=32, kernel=(3,3), if_pool=True)
+    cnn_0 = conv_layer(data_f, num_filter=32, kernel=(3, 3), if_pool=True)
     cnn_1 = conv_layer(cnn_0, num_filter=64, kernel=(3, 3), if_pool=True)
     cnn_2 = conv_layer(cnn_1, num_filter=128, kernel=(3, 3), if_pool=True)
 
+    # add inception layer
+
+    inception_l = inception_layer(cnn_2, 128, 128, 128, 128, 256, 128, 'inception1')
+
     # flatten CNN
+    # flatten = mx.symbol.Flatten(data=inception_l)
+
+    # flatten without inception
     flatten = mx.symbol.Flatten(data=cnn_2)
     # 1st FCN
     fc1 = mx.symbol.FullyConnected(data=flatten, num_hidden=128)
     tanh3 = mx.symbol.Activation(data=fc1, act_type="tanh")
+
     # 2nd FCN
     fc2 = mx.symbol.FullyConnected(data=tanh3, num_hidden=10)
+
     # softmax output
     cnn_n = mx.symbol.SoftmaxOutput(data=fc2, name='softmax')
 
