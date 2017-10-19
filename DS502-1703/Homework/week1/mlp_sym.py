@@ -62,9 +62,9 @@ def conv_layer(input_layer, num_filter=32, kernel=(3,3), pad=(1, 1),
 
     layer_s = mx.sym.BatchNorm(relu)
     if if_pool:
-        layer_s = mx.sym.Pooling(data=layer_s, name='poing', kernel=(2, 2), stride=(2,2), pool_type='max')
+        layer_s = mx.sym.Pooling(data=layer_s, kernel=(2, 2), stride=(2,2), pool_type='max')
     else:
-        layer_s = relu
+        pass
 
     return layer_s
 
