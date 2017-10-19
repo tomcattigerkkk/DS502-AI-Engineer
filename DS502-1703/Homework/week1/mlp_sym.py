@@ -44,7 +44,7 @@ def get_mlp_sym():
     return mlp
 
 
-def conv_layer(input_layer, num_filter=32, kernel=(3,3), if_pool=False):
+def conv_layer(input_layer, num_filter=32, kernel=(3,3), pad=(1, 1), if_pool=False):
     """
     :return: a single convolution layer symbol
     """
@@ -55,7 +55,7 @@ def conv_layer(input_layer, num_filter=32, kernel=(3,3), if_pool=False):
     # What is the expected output shape?
 
     conv = mx.sym.Convolution(data=input_layer,
-                             num_filter=num_filter, kernel=kernel, pad=(1, 1), stride=(1, 1), # weight=w,
+                             num_filter=num_filter, kernel=kernel, pad=pad, stride=(1, 1), # weight=w,
                              no_bias=True)
     relu = mx.sym.Activation(data=conv, act_type='relu')
 
@@ -77,19 +77,19 @@ def inception_layer(input_layer, num1_1x1, num2_1x1, num2_3x3,
     """
     # first 1x1 convolution layer
 
-    cov1 = conv_layer(input_layer, num_filter=num1_1x1, kernel=(1,1))
+    cov1 = conv_layer(input_layer, num_filter=num1_1x1, kernel=(1,1), if_pool=True)
 
     # second 1x1 plus 3x3 convolution layer
-    cov2 = conv_layer(input_layer, num_filter=num2_1x1, kernel=(1,1))
-    cov2 = conv_layer(cov2, num_filter=num2_3x3)
+    cov2 = conv_layer(input_layer, num_filter=num2_1x1, kernel=(1,1), if_pool=False)
+    cov2 = conv_layer(cov2, num_filter=num2_3x3, if_pool=True)
 
-    # third 1x1 plus 3x3 convolution layer
-    cov3 = conv_layer(input_layer, num_filter=num3_1x1, kernel=(1, 1))
-    cov3 = conv_layer(cov3, num_filter=num3_5x5, kernel=(3, 3))
+    # third 1x1 plus 5x5 convolution layer
+    cov3 = conv_layer(input_layer, num_filter=num3_1x1, kernel=(1, 1), if_pool=False)
+    cov3 = conv_layer(cov3, num_filter=num3_5x5, kernel=(5, 5), pad=(2, 2), if_pool=True)
 
     # forth 3x3 max-pooling plus 1x1 convolutin layer
-    # cov4 = mx.sym.Pooling(data=input_layer, name='poing', kernel=(3, 3), stride=(1, 1), pool_type='max')
-    cov4 = conv_layer(input_layer, num_filter=num4_1x1, kernel=(1,1))
+    cov4 = mx.sym.Pooling(data=input_layer, name='poing', kernel=(3, 3), stride=(1, 1), pool_type='max')
+    cov4 = conv_layer(cov4, num_filter=num4_1x1, kernel=(1,1), if_pool=False)
     # concat
     inception_output = mx.sym.Concat(*[cov1, cov2, cov3, cov4], name=('concat %s' % name))
 
@@ -116,13 +116,13 @@ def get_conv_sym():
 
     # add inception layer
 
-    inception_l = inception_layer(cnn_2, 128, 128, 128, 128, 256, 128, 'inception1')
+    inception_l = inception_layer(cnn_2, 32, 32, 32, 16, 32, 32, 'inception1')
 
     # flatten CNN
-    # flatten = mx.symbol.Flatten(data=inception_l)
+    flatten = mx.symbol.Flatten(data=inception_l)
 
     # flatten without inception
-    flatten = mx.symbol.Flatten(data=cnn_2)
+    # flatten = mx.symbol.Flatten(data=cnn_2)
     # 1st FCN
     fc1 = mx.symbol.FullyConnected(data=flatten, num_hidden=128)
     tanh3 = mx.symbol.Activation(data=fc1, act_type="tanh")
