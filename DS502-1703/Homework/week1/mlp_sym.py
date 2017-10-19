@@ -44,7 +44,8 @@ def get_mlp_sym():
     return mlp
 
 
-def conv_layer(input_layer, num_filter=32, kernel=(3,3), pad=(1, 1), if_pool=False):
+def conv_layer(input_layer, num_filter=32, kernel=(3,3), pad=(1, 1),
+               stride=(1, 1), if_pool=False):
     """
     :return: a single convolution layer symbol
     """
@@ -55,7 +56,7 @@ def conv_layer(input_layer, num_filter=32, kernel=(3,3), pad=(1, 1), if_pool=Fal
     # What is the expected output shape?
 
     conv = mx.sym.Convolution(data=input_layer,
-                             num_filter=num_filter, kernel=kernel, pad=pad, stride=(1, 1), # weight=w,
+                             num_filter=num_filter, kernel=kernel, pad=pad, stride=stride, # weight=w,
                              no_bias=True)
     relu = mx.sym.Activation(data=conv, act_type='relu')
 
@@ -89,7 +90,7 @@ def inception_layer(input_layer, num1_1x1, num2_1x1, num2_3x3,
 
     # forth 3x3 max-pooling plus 1x1 convolutin layer
     cov4 = mx.sym.Pooling(data=input_layer, name='poing', kernel=(3, 3), stride=(1, 1), pool_type='max')
-    cov4 = conv_layer(cov4, num_filter=num4_1x1, kernel=(1,1), if_pool=False)
+    cov4 = conv_layer(cov4, num_filter=num4_1x1, kernel=(1, 1), stride=(2, 2), if_pool=False)
     # concat
     inception_output = mx.sym.Concat(*[cov1, cov2, cov3, cov4], name=('concat %s' % name))
 

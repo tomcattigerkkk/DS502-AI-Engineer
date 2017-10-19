@@ -22,11 +22,15 @@ if __name__=="__main__":
     # plot.render("MLP")
 
     # print the network structure of my CNN
-    plot = mx.viz.plot_network(model, title="cnn", save_format="pdf", hide_weights=True)
-    plot.render("CNN")
+    # plot = mx.viz.plot_network(model, title="cnn", save_format="pdf", hide_weights=True)
+    # plot.render("CNN")
+
+    # print the network structure of my CNN with inception layer
+    plot = mx.viz.plot_network(model, title="cnn_inception", save_format="pdf", hide_weights=True)
+    plot.render("CNN_inception")
 
     # create a trainable module on CPU/GPU
-    mod = mx.mod.Module(symbol=model, context=mx.gpu()) # mx.cpu()
+    mod = mx.mod.Module(symbol=model, context=mx.cpu()) # mx.cpu()
     mod.fit(train_iter,  # train data
             eval_data=val_iter,  # validation data
             optimizer='sgd',  # use SGD to train
