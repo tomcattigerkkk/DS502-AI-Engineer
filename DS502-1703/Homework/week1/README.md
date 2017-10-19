@@ -5,9 +5,10 @@ Homework for Week1 part2.
 The structures of my network are illustrated in PDFs, **MLP.pdf**, **CNN.pdf**,   
  **CNN_inception.pdf**.
 
-# Some comparisons 
+# Some Comparisons 
 
 ## Short Result
+
  	|Comparison              | MLP | CNN | CNN with Inception |
  	|---|---|---|---|
 	
@@ -21,7 +22,7 @@ The structures of my network are illustrated in PDFs, **MLP.pdf**, **CNN.pdf**,
 
 > GPU: 1 x GTX1060(notebook)
 
-## Details of test result
+## Details of Test Result
 
 ### MLP (CPU)
 ```textINFO:root:Epoch[5] Batch [100]	Speed: 1176.08 samples/sec	accuracy=0.986535
@@ -285,3 +286,10 @@ INFO:root:Epoch[9] Train-accuracy=1.000000
 INFO:root:Epoch[9] Time cost=4.267
 INFO:root:Epoch[9] Validation-accuracy=0.994000
 ```
+
+# Some Problems
+1. The performance of my Inception is not so good as CNN with inception layer. 
+2. There is a warning when I add inception layer
+	> node 'inception', graph 'cnn_inception' size too small for label
+   
+   How can I fix it?
