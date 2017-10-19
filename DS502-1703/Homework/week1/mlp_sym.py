@@ -117,13 +117,13 @@ def get_conv_sym():
 
     # add inception layer
 
-    inception_l = inception_layer(cnn_2, 32, 32, 32, 16, 32, 32, 'inception1')
+    # inception_l = inception_layer(cnn_2, 32, 32, 32, 16, 32, 32, 'inception1')
 
     # flatten CNN
-    flatten = mx.symbol.Flatten(data=inception_l)
+    # flatten = mx.symbol.Flatten(data=inception_l)
 
     # flatten without inception
-    # flatten = mx.symbol.Flatten(data=cnn_2)
+    flatten = mx.symbol.Flatten(data=cnn_2)
     # 1st FCN
     fc1 = mx.symbol.FullyConnected(data=flatten, num_hidden=128)
     tanh3 = mx.symbol.Activation(data=fc1, act_type="tanh")
