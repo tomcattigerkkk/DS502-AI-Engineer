@@ -5,7 +5,7 @@ logging.basicConfig(level=logging.DEBUG)
 from common import data
 from common.util import download_file
 import mxnet as mx
-MODE = 1
+MODE = 2
 import numpy as np
 import mxnet as mx
 
@@ -36,7 +36,9 @@ mon = mx.mon.Monitor(100, norm_stat)
 
 if __name__ == '__main__':
     # download data
-    (train_fname, val_fname) = download_cifar10()
+    # (train_fname, val_fname) = download_cifar10()
+    train_fname = './data/cifar10_train.rec'
+    val_fname = './data/cifar10_val.rec'
 
     # parse args
     parser = argparse.ArgumentParser(description="train cifar10",

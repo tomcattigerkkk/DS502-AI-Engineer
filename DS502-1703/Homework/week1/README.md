@@ -12,11 +12,11 @@ The structures of my network are illustrated in PDFs, **MLP.pdf**, **CNN.pdf**,
  	|Comparison              | MLP | CNN | CNN with Inception |
  	|---|---|---|---|
 	
-	|Acc(5 epoch) with CPU   | .9744 | .9951 | .9932 |
+	|Acc(5 epoch) with CPU   | .9755 | .9953 | .9942 |
 
 	|CPU Epoch time          | 2464.23 samples/sec | 392.34 samples/sec | 263.65 samples/sec |
 
-	|Acc(5 epoch) with GPU   | .9752 | .9950 | .9939 |
+	|Acc(5 epoch) with GPU   | .9760 | .9950 | .9942 |
 	
 	|GPU Epoch Time(optional)| 84755.50 samples/sec | 18796.73 samples/sec | 14494.66 samples/sec |
 
