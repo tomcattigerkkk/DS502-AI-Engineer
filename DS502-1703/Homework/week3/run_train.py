@@ -5,7 +5,7 @@ from data_ulti import get_iterator
 
 import logging
 import sys
-
+from metric import LossMetric, LogMetricsCallback
 import time
 from metric import LogMetricsCallback, LossMetric
 root_logger = logging.getLogger()
@@ -15,7 +15,11 @@ root_logger.setLevel(logging.DEBUG)
 
 if __name__ == "__main__":
 
-    tensorboard_use = False
+# # <<<<<<< HEAD
+#     tensorboard_use = False
+# =======
+    tensorboard_use = True
+# >>>>>>> orgstream/master
     # get sym
     # Try different network 18, 50, 101 to find the best one
     sym = get_resnet_model('pretrained_models/resnet-34', 0)
@@ -24,10 +28,10 @@ if __name__ == "__main__":
     # get some input
     # change it to the data rec you create, and modify the batch_size
     train_data = get_iterator(path='DATA_rec/cat.rec', data_shape=(3, 224, 224), label_width=7*7*5, batch_size=32, shuffle=True)
-    val_data = get_iterator(path='DATA_rec/cat_value.rec', data_shape=(3, 224, 224), label_width=7*7*5, batch_size=32)
+    val_data = get_iterator(path='DATA_rec/cat_val.rec', data_shape=(3, 224, 224), label_width=7*7*5, batch_size=32)
 
     # allocate gpu/cpu mem to the sym
-    mod = mx.mod.Module(symbol=sym, context=mx.gpu(0))
+    mod = mx.mod.Module(symbol=sym, context=mx.cpu(0))  # set to gpu
 
     # # print metric design
     def loss_metric(label, pred):
@@ -69,11 +73,19 @@ if __name__ == "__main__":
         # the loss here is meaningless
         return -1
 
-    # setup metric
-    metric = mx.metric.create(loss_metric, allow_extra_outputs=True)
-
     tme = time.time()
-    batch_end_callback = [mx.callback.Speedometer(batch_size=32, frequent=10, auto_reset=False)]
+    if not tensorboard_use:
+        batch_end_callback = [mx.callback.Speedometer(batch_size=32, frequent=10, auto_reset=False)]
+        eval_end_callback = [mx.callback.Speedometer(batch_size=32, frequent=10, auto_reset=False)]
+        # setup metric
+        metric = mx.metric.create(loss_metric, allow_extra_outputs=True)
+
+    else:
+    #enable it if you want to use tensorboard
+        eval_end_callback = LogMetricsCallback('logs/val-' + str(tme))
+        batch_end_callback = [mx.callback.Speedometer(batch_size=32, frequent=10, auto_reset=False),
+                          LogMetricsCallback('logs/train-' + str(tme))]
+        metric = LossMetric(0.5)
 
     # setup monitor for debugging 
     def norm_stat(d):
@@ -98,5 +110,6 @@ if __name__ == "__main__":
             aux_params=aux_params,
             allow_missing=True,
             batch_end_callback= batch_end_callback,
+            eval_end_callback=eval_end_callback,
             epoch_end_callback=checkpoint,
             )

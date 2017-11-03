@@ -54,6 +54,6 @@ def get_all_annotation(path, imglist, save=True):
 path = "/home/chuck/bittiger_course_mxnet/DATA/VOCdevkit/VOC2012/Annotations/"
 catlist = cp_alliamge()
 box = get_all_annotation(path, catlist)
-print box.keys()
-print [len(box[key]) for key in box.keys()]
-print [len(box[key]) for key in box.keys()]
+print(box.keys())
+print([len(box[key]) for key in box.keys()])
+print([len(box[key]) for key in box.keys()])

@@ -1,7 +1,7 @@
 import mxnet as mx
 import numpy as np
 import cv2
-
+import random
 
 # get iterator
 def get_iterator(path, data_shape, label_width, batch_size, shuffle=False):
@@ -69,3 +69,8 @@ if __name__ == "__main__":
     sizet = 224
     name = "cat"
     toRecFile(imgroot, imglist, annotation, sizet, (7, 7, 5), 32, name)
+
+    len_list = len(imglist)
+    imgvallist = random.sample(imglist, int(.3 * len_list))
+    name_val = 'cat_val'
+    toRecFile(imgroot, imgvallist, annotation, sizet, (7, 7, 5), 32, name_val)

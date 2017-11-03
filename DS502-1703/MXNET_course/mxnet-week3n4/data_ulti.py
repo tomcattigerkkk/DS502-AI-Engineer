@@ -1,6 +1,7 @@
 import mxnet as mx
 import numpy as np
 import cv2
+import random
 
 
 # get iterator
@@ -65,7 +66,12 @@ if __name__ == "__main__":
     # transform jpg to rec file
     imgroot = "./DATA/"
     annotation = np.load("./DATA/annotation_list.npy")[()]
+    print(dir(annotation))
     imglist = [i for i in annotation.keys()]
+    len_list = len(imglist)
+    imgvallist = random.sample(imglist, int(.3*len_list))
     sizet = 224
     name = "cat"
+    name_val = 'cat_val'
     toRecFile(imgroot, imglist, annotation, sizet, (7, 7, 5), 32, name)
+    toRecFile(imgroot, imgvallist, annotation, sizet, (7, 7, 5), 32, name_val)

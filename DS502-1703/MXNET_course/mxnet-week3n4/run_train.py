@@ -15,11 +15,11 @@ root_logger.setLevel(logging.DEBUG)
 
 if __name__ == "__main__":
 
-<<<<<<< HEAD
-    tensorboard_use = False
-=======
+# <<<<<<< HEAD
+#     tensorboard_use = False
+# =======
     tensorboard_use = True
->>>>>>> orgstream/master
+# >>>>>>> orgstream/master
     # get sym
     # Try different network 18, 50, 101 to find the best one
     sym = get_resnet_model('pretrained_models/resnet-34', 0)

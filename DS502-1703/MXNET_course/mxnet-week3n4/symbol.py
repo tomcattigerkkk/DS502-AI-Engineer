@@ -38,7 +38,7 @@ def YOLO_loss(predict, label):
 def get_resnet_model(model_path, epoch):
     # not necessary to be this name, you can do better
     label = mx.sym.Variable('softmax_label')
-    # load symbol and actual weights
+    # load symbol and actual weights sym computing graph, args -- train weight; aux -- assemble params
     sym, args, aux = mx.model.load_checkpoint(model_path, epoch)
     # extract last bn layer
     sym = sym.get_internals()['bn1_output']
